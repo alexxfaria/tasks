@@ -1,7 +1,8 @@
 export default {
   fontFamily: 'Lato',
   colors: {
-    secondary: '#FFF',
+    today: '#B13B44', // cor hoje
+    secondary: '#FFF', // cor secondaria
     mainText: '#222',
     subText: '#555',
   },

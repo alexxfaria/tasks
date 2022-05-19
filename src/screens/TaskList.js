@@ -7,6 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Platform,
+  Alert,
 } from 'react-native';
 
 import commonStyles from '../commonStyles';
@@ -20,7 +21,7 @@ import AddTask from './AddTask';
 export default class TaskList extends Component {
   state = {
     showDoneTask: true,
-    showAddTask: true,
+    showAddTask: false,
     visibleTasks: [],
     tasks: [
       {
@@ -71,6 +72,23 @@ export default class TaskList extends Component {
     this.setState({tasks}, this.filterTasks);
   };
   // ############ Fim #####
+
+  addTask = newTask => {
+    if (!newTask.desc || !newTask.desc.trim()) {
+      Alert.alert('Dados invalidos', 'Descrição não informada!');
+      return;
+    }
+    const tasks = [...this.state.tasks];
+    tasks.push({
+      id: Math.random(),
+      desc: newTask.desc,
+      estimatAt: newTask.date,
+      doneAt: null,
+    });
+
+    this.setState({tasks, showAddTask: false}, this.filterTasks);
+  };
+
   render() {
     const today = moment()
       .locale('pt-br')
@@ -80,6 +98,7 @@ export default class TaskList extends Component {
         <AddTask
           isVisible={this.state.showAddTask}
           onCancel={() => this.setState({showAddTask: false})}
+          onSave={this.addTask}
         />
         <ImageBackground source={todayImage} style={styles.background}>
           <View style={styles.iconBar}>
@@ -105,6 +124,12 @@ export default class TaskList extends Component {
             )}
           />
         </View>
+        <TouchableOpacity
+          style={styles.addButton}
+          activeOpacity={0.7}
+          onPress={() => this.setState({showAddTask: true})}>
+          <Icon name="plus" size={20} color={commonStyles.colors.secondary} />
+        </TouchableOpacity>
       </View>
     );
   }
@@ -143,5 +168,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     justifyContent: 'flex-end',
     marginTop: Platform.OS === 'ios' ? 40 : 10,
+  },
+  addButton: {
+    position: 'absolute',
+    right: 30,
+    bottom: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25, // deixar o botão redondo
+    backgroundColor: commonStyles.colors.today,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
